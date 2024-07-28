@@ -28,7 +28,8 @@ public class Main {
             System.out.println("4. Edit Task");
             System.out.println("5. Mark Task as Completed");
             System.out.println("6. View Tasks by Priority");
-            System.out.println("7. Exit");
+            System.out.println("7. View Tasks by Category");
+            System.out.println("8. Exit");
             System.out.print("Choose an option: ");
             int choice = scanner.nextInt();
             scanner.nextLine(); // consume newline
@@ -53,6 +54,9 @@ public class Main {
                     viewTasksByPriority(scanner, scheduleManager);
                     break;
                 case 7:
+                    viewTasksByCategory(scanner, scheduleManager);
+                    break;
+                case 8:
                     exit = true;
                     break;
                 default:
@@ -66,7 +70,8 @@ public class Main {
         if (result.startsWith("Error:")) {
             return result;
         }
-        Task task = TaskFactory.createTask(result.split("\\|")[0], LocalDateTime.parse(result.split("\\|")[1], formatter), LocalDateTime.parse(result.split("\\|")[2], formatter), result.split("\\|")[3]);
+        String[] parts = result.split("\\|");
+        Task task = TaskFactory.createTask(parts[0], LocalDateTime.parse(parts[1], formatter), LocalDateTime.parse(parts[2], formatter), parts[3], parts[4]);
         return scheduleManager.addTask(task);
     }
 
@@ -82,7 +87,8 @@ public class Main {
         if (result.startsWith("Error:")) {
             return result;
         }
-        Task newTask = TaskFactory.createTask(result.split("\\|")[0], LocalDateTime.parse(result.split("\\|")[1], formatter), LocalDateTime.parse(result.split("\\|")[2], formatter), result.split("\\|")[3]);
+        String[] parts = result.split("\\|");
+        Task newTask = TaskFactory.createTask(parts[0], LocalDateTime.parse(parts[1], formatter), LocalDateTime.parse(parts[2], formatter), parts[3], parts[4]);
         return scheduleManager.editTask(oldDescription, newTask);
     }
 
@@ -100,6 +106,24 @@ public class Main {
             System.out.println("No tasks found with priority: " + priority);
         } else {
             System.out.println("Viewing tasks with priority " + priority + ":");
+            for (Task task : tasks) {
+                System.out.println(formatTask(task));
+            }
+        }
+    }
+
+    private static void viewTasksByCategory(Scanner scanner, ScheduleManager scheduleManager) {
+        System.out.println("Enter the category (Leisure, Self Care, Work):");
+        String category = scanner.nextLine();
+        if (!category.equalsIgnoreCase("Leisure") && !category.equalsIgnoreCase("Self Care") && !category.equalsIgnoreCase("Work")) {
+            System.out.println("Error: Invalid category. Please enter Leisure, Self Care, or Work.");
+            return;
+        }
+        List<Task> tasks = scheduleManager.getTasksByCategory(category);
+        if (tasks.isEmpty()) {
+            System.out.println("No tasks found in category: " + category);
+        } else {
+            System.out.println("Viewing tasks in category " + category + ":");
             for (Task task : tasks) {
                 System.out.println(formatTask(task));
             }
@@ -148,7 +172,13 @@ public class Main {
             return "Error: Invalid priority level. Please enter High, Medium, or Low.";
         }
 
-        return String.format("%s|%s|%s|%s", description, startTime.format(formatter), endTime.format(formatter), priorityLevel);
+        System.out.println("Enter task category (Leisure, Self Care, Work):");
+        String category = scanner.nextLine();
+        if (!category.equalsIgnoreCase("Leisure") && !category.equalsIgnoreCase("Self Care") && !category.equalsIgnoreCase("Work")) {
+            return "Error: Invalid category. Please enter Leisure, Self Care, or Work.";
+        }
+
+        return String.format("%s|%s|%s|%s|%s", description, startTime.format(formatter), endTime.format(formatter), priorityLevel, category);
     }
 
     private static void viewTasks(ScheduleManager scheduleManager) {
@@ -173,6 +203,6 @@ public class Main {
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
         String startTime = task.getStartTime().format(timeFormatter);
         String endTime = task.getEndTime().format(timeFormatter);
-        return String.format("%s - %s: %s [%s] %s", startTime, endTime, task.getDescription(), task.getPriorityLevel(), task.isCompleted() ? "(Completed)" : "");
+        return String.format("%s - %s: %s [%s] %s %s", startTime, endTime, task.getDescription(), task.getPriorityLevel(), task.isCompleted() ? "(Completed)" : "", task.getCategory());
     }
 }

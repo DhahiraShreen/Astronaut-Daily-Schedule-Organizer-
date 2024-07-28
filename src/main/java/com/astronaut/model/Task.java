@@ -8,13 +8,15 @@ public class Task {
     private LocalDateTime endTime;
     private String priorityLevel;
     private boolean completed;
+    private String category; // New field for category
 
-    public Task(String description, LocalDateTime startTime, LocalDateTime endTime, String priorityLevel) {
+    public Task(String description, LocalDateTime startTime, LocalDateTime endTime, String priorityLevel, String category) {
         this.description = description;
         this.startTime = startTime;
         this.endTime = endTime;
         this.priorityLevel = priorityLevel;
         this.completed = false;
+        this.category = category; // Initialize the category
     }
 
     public String getDescription() {
@@ -37,6 +39,10 @@ public class Task {
         return completed;
     }
 
+    public String getCategory() {
+        return category; // Getter for category
+    }
+
     public void markAsCompleted() {
         this.completed = true;
     }
@@ -47,6 +53,6 @@ public class Task {
 
     @Override
     public String toString() {
-        return String.format("%s - %s: %s [%s] %s", startTime.toLocalTime(), endTime.toLocalTime(), description, priorityLevel, completed ? "(Completed)" : "");
+        return String.format("%s - %s: %s [%s] %s %s", startTime.toLocalTime(), endTime.toLocalTime(), description, priorityLevel, completed ? "(Completed)" : "", category);
     }
 }

@@ -118,6 +118,13 @@ public class ScheduleManager {
                     .collect(Collectors.toList());
     }
 
+    // New method to get tasks by category
+    public List<Task> getTasksByCategory(String category) {
+        return tasks.stream()
+                    .filter(task -> task.getCategory().equalsIgnoreCase(category))
+                    .collect(Collectors.toList());
+    }
+
     private List<Observer> observers = new ArrayList<>();
 
     public void addObserver(Observer observer) {
