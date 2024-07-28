@@ -16,7 +16,7 @@ The Astronaut Scheduler is a console-based application designed to help astronau
 
 ## Project Structure
 
-AstronautScheduler/
+```AstronautScheduler/
 ├── src/
 │ ├── main/
 │ │ ├── java/
@@ -39,7 +39,7 @@ AstronautScheduler/
 ├── application.log
 ├── dependency-reduced-pom.xml
 ├── pom.xml
-└── README.md
+└── README.md```
 
 
 ## Features
